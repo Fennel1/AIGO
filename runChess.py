@@ -60,7 +60,7 @@ def runChess(game_nos,time_limits,MAX_TIME=360):
         for i in range(COLUMN+1):
             for j in range(ROW+1):
                 list_all.append((i, j))
-        
+                
         change = 0
         g = 0
         m = 0

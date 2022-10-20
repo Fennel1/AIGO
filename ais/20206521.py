@@ -7,9 +7,9 @@ GRID_WIDTH = 40
 COLUMN = 15
 ROW = 15
 
-list1 = []  # AI
-list2 = []  # human
-list3 = []  # all
+# list1 = []  # AI
+# list2 = []  # human
+# list3 = []  # all
 
 list_all = []  # 整个棋盘的点
 
@@ -37,29 +37,35 @@ shape_score = [(50, (0, 1, 1, 0, 0)),
                (99999999, (1, 1, 1, 1, 1))]
 
 
-def ai():
+def ai(listai, listhum, listall):
+    if len(listai)+len(listhum) == 0:
+        return (7, 7)
+    global list_all
+    list_all = listall
+    list_now = listai + listhum
     global cut_count   # 统计剪枝次数
     cut_count = 0
     global search_count   # 统计搜索次数
     search_count = 0
     # 初始化 负值极大算法
-    negamax(True, DEPTH, -99999999, 99999999)
-    print("本次共剪枝次数：" + str(cut_count))
-    print("本次共搜索次数：" + str(search_count))
+    negamax(True, DEPTH, -99999999, 99999999, listai, listhum, list_now)
+    # print("本次共剪枝次数：" + str(cut_count))
+    # print("本次共搜索次数：" + str(search_count))
+    print("AI下一步最应该下的位置：" + str(next_point))
     return (next_point[0], next_point[1])
 
 
 # 负值极大算法搜索 alpha + beta剪枝,合并极大节点和极小节点两种情况,减少代码量
 # 在一盘棋局中,若到棋手A走棋,alpha 相当于棋手A得到的最好的值,对于棋手A的值,从对手的角度看就要取负值.
-def negamax(is_ai, depth, alpha, beta):
+def negamax(is_ai, depth, alpha, beta, list1, list2, list3):
     
     # 游戏是否结束 | | 探索的递归深度是否到边界
     if game_win(list1) or game_win(list2) or depth == 0:
-        return evaluation(is_ai)
+        return evaluation(is_ai, list1, list2)
 
     # list_all - list3 = {可落子的点集}
     blank_list = list(set(list_all).difference(set(list3)))
-    order(blank_list)   # 按搜索顺序排序  提高剪枝效率
+    order(blank_list, list3)   # 按搜索顺序排序  提高剪枝效率
     
     # 遍历每一个候选步
     for next_step in blank_list:
@@ -68,7 +74,7 @@ def negamax(is_ai, depth, alpha, beta):
         search_count += 1
 
         # 如果要评估的位置没有相邻的子， 则不去评估  减少计算
-        if not has_neightnor(next_step):
+        if not has_neightnor(next_step, list3):
             continue
         # 判断是否为ai走棋
         if is_ai:
@@ -79,7 +85,7 @@ def negamax(is_ai, depth, alpha, beta):
         
         # 返回到上一层节点时，会给出分数的相反数(因为返回的值相当于是在对手的选择下对手对当前棋盘的评估分数,而作为他的对立方,要把分数取反)
         # alpha可以视为当前情况下，当前棋手可以得到的最好值，当前棋手得到最好值 == 对手不愿意接受的最差值，因为对手需要不断提高
-        value = -negamax(not is_ai, depth - 1, -beta, -alpha)
+        value = -negamax(not is_ai, depth - 1, -beta, -alpha, list1, list2, list3)
         
         # 将刚才走棋移除
         if is_ai:
@@ -89,8 +95,8 @@ def negamax(is_ai, depth, alpha, beta):
         list3.remove(next_step)
 
         if value > alpha:
-            print(str(value) + " [alpha: " + str(alpha) + "beta:" + str(beta) + ']')
-            print(list3)
+            # print(str(value) + " [alpha: " + str(alpha) + "beta:" + str(beta) + ']')
+            # print(list3)
             #当depth == DEPTH时,由于在循环内不断迭代,总会在考虑后三步棋的情况下逐渐找到最好的走子方式;
             if depth == DEPTH:
                 next_point[0] = next_step[0]
@@ -108,7 +114,7 @@ def negamax(is_ai, depth, alpha, beta):
 
 
 #  离最后落子的邻居位置最有可能是最优点
-def order(blank_list):
+def order(blank_list, list3):
     # list3[-1] 表示 list3 中最后一个落子
     last_pt = list3[-1];
     
@@ -125,7 +131,7 @@ def order(blank_list):
                     blank_list.insert(0, (last_pt[0] + i, last_pt[1] + j))
 
 # 判断点 pt 是否有邻居点
-def has_neightnor(pt):
+def has_neightnor(pt, list3):
     for i in range(-1, 2):
         for j in range(-1, 2):
             if i == 0 and j == 0:
@@ -137,7 +143,7 @@ def has_neightnor(pt):
 
 # 评估函数,主要是评估当前棋局的得分
 # evaluation 为启发式的评价函数，alpha+beta搜索是相当于在假设双方在同一评价函数函数情况下才有效
-def evaluation(is_ai):
+def evaluation(is_ai, list1, list2):
     total_score = 0
 
     # 判断是否为 ai 方
@@ -204,7 +210,8 @@ def cal_score(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr):
         for (score, shape) in shape_score:
             if tmp_shap5 == shape or tmp_shap6 == shape:
                 if tmp_shap5 == (1,1,1,1,1):
-                    print('wwwwwwwwwwwwwwwwwwwwwwwwwww')
+                    # print('wwwwwwwwwwwwwwwwwwwwwwwwwww')
+                    continue
                 if score > max_score_shape[0]:
                     max_score_shape = (score, ((m + (0+offset) * x_decrict, n + (0+offset) * y_derice),
                                                (m + (1+offset) * x_decrict, n + (1+offset) * y_derice),
