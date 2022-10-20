@@ -91,7 +91,7 @@ def negamax(is_ai, depth, alpha, beta):
         if value > alpha:
             print(str(value) + " [alpha: " + str(alpha) + "beta:" + str(beta) + ']')
             # print(list3)
-            #当depth == DEPTH时,由于在循环内不断迭代,总会在考虑后三步棋的情况下逐渐找到最好的走子方式;
+            # 当depth == DEPTH时,由于在循环内不断迭代,总会在考虑后三步棋的情况下逐渐找到最好的走子方式;
             if depth == DEPTH:
                 next_point[0] = next_step[0]
                 next_point[1] = next_step[1]
@@ -110,7 +110,7 @@ def negamax(is_ai, depth, alpha, beta):
 #  离最后落子的邻居位置最有可能是最优点
 def order(blank_list):
     # list3[-1] 表示 list3 中最后一个落子
-    last_pt = list3[-1];
+    last_pt = list3[-1]
     
     # for item in blank_list: ???
 
@@ -220,7 +220,6 @@ def cal_score(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr):
                 for pt2 in max_score_shape[1]:
                     if pt1 == pt2 and max_score_shape[0] > 10 and item[0] > 10:
                         add_score += item[0] + max_score_shape[0]
-
         score_all_arr.append(max_score_shape)
 
     return add_score + max_score_shape[0]

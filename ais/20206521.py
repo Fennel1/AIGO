@@ -15,8 +15,9 @@ list_all = []  # 整个棋盘的点
 
 next_point = [0, 0]  # AI下一步最应该下的位置
 
+
 ratio = 1  # 进攻的系数   大于1 进攻型，  小于1 防守型
-DEPTH = 3  # 搜索深度   只能是单数。  如果是负数， 评估函数评估的的是自己多少步之后的自己得分的最大值，并不意味着是最好的棋， 评估函数的问题
+DEPTH = 1  # 搜索深度   只能是单数。  如果是负数， 评估函数评估的的是自己多少步之后的自己得分的最大值，并不意味着是最好的棋， 评估函数的问题
 
 
 # 棋型的评估分数,表示当棋局为不同形状时的得分
@@ -25,15 +26,15 @@ shape_score = [(50, (0, 1, 1, 0, 0)),
                (200, (1, 1, 0, 1, 0)),
                (500, (0, 0, 1, 1, 1)),
                (500, (1, 1, 1, 0, 0)),
-               (5000, (0, 1, 1, 1, 0)),
-               (5000, (0, 1, 0, 1, 1, 0)),
-               (5000, (0, 1, 1, 0, 1, 0)),
-               (5000, (1, 1, 1, 0, 1)),
-               (5000, (1, 1, 0, 1, 1)),
-               (5000, (1, 0, 1, 1, 1)),
-               (5000, (1, 1, 1, 1, 0)),
-               (5000, (0, 1, 1, 1, 1)),
-               (50000, (0, 1, 1, 1, 1, 0)),
+               (50000, (0, 1, 1, 1, 0)),
+               (50000, (0, 1, 0, 1, 1, 0)),
+               (50000, (0, 1, 1, 0, 1, 0)),
+               (50000, (1, 1, 1, 0, 1)),
+               (50000, (1, 1, 0, 1, 1)),
+               (50000, (1, 0, 1, 1, 1)),
+               (50000, (1, 1, 1, 1, 0)),
+               (50000, (0, 1, 1, 1, 1)),
+               (500000, (0, 1, 1, 1, 1, 0)),
                (99999999, (1, 1, 1, 1, 1))]
 
 
@@ -97,7 +98,7 @@ def negamax(is_ai, depth, alpha, beta, list1, list2, list3):
         if value > alpha:
             # print(str(value) + " [alpha: " + str(alpha) + "beta:" + str(beta) + ']')
             # print(list3)
-            #当depth == DEPTH时,由于在循环内不断迭代,总会在考虑后三步棋的情况下逐渐找到最好的走子方式;
+            # 当depth == DEPTH时,由于在循环内不断迭代,总会在考虑后三步棋的情况下逐渐找到最好的走子方式;
             if depth == DEPTH:
                 next_point[0] = next_step[0]
                 next_point[1] = next_step[1]
@@ -116,19 +117,19 @@ def negamax(is_ai, depth, alpha, beta, list1, list2, list3):
 #  离最后落子的邻居位置最有可能是最优点
 def order(blank_list, list3):
     # list3[-1] 表示 list3 中最后一个落子
-    last_pt = list3[-1];
+    last_pt = list3[-1]
     
-    for item in blank_list:
-        # 在最后落子附近搜索是否有可以落子的点
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                # 当 i = j = 0 是表示最后落子,因为在其附近搜索所以舍弃 i=j=0;
-                if i == 0 and j == 0:
-                    continue
-                # 当 最后落子点附近有可选点时,先从删除,然后从 候选点列表首部插入
-                if (last_pt[0] + i, last_pt[1] + j) in blank_list:
-                    blank_list.remove((last_pt[0] + i, last_pt[1] + j))
-                    blank_list.insert(0, (last_pt[0] + i, last_pt[1] + j))
+    # for item in blank_list:
+    # 在最后落子附近搜索是否有可以落子的点
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            # 当 i = j = 0 是表示最后落子,因为在其附近搜索所以舍弃 i=j=0;
+            if i == 0 and j == 0:
+                continue
+            # 当 最后落子点附近有可选点时,先从删除,然后从候选点列表首部插入
+            if (last_pt[0] + i, last_pt[1] + j) in blank_list:
+                blank_list.remove((last_pt[0] + i, last_pt[1] + j))
+                blank_list.insert(0, (last_pt[0] + i, last_pt[1] + j))
 
 # 判断点 pt 是否有邻居点
 def has_neightnor(pt, list3):
@@ -209,9 +210,8 @@ def cal_score(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr):
 
         for (score, shape) in shape_score:
             if tmp_shap5 == shape or tmp_shap6 == shape:
-                if tmp_shap5 == (1,1,1,1,1):
-                    # print('wwwwwwwwwwwwwwwwwwwwwwwwwww')
-                    continue
+                # if tmp_shap5 == (1,1,1,1,1):
+                    # print('win')
                 if score > max_score_shape[0]:
                     max_score_shape = (score, ((m + (0+offset) * x_decrict, n + (0+offset) * y_derice),
                                                (m + (1+offset) * x_decrict, n + (1+offset) * y_derice),
@@ -225,7 +225,7 @@ def cal_score(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr):
             for pt1 in item[1]:
                 for pt2 in max_score_shape[1]:
                     if pt1 == pt2 and max_score_shape[0] > 10 and item[0] > 10:
-                        add_score += item[0] + max_score_shape[0]
+                        add_score += item[0] + max_score_shape[0]*0.3
 
         score_all_arr.append(max_score_shape)
 
