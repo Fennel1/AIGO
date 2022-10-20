@@ -450,7 +450,7 @@ for i in range(16):
     for j in range(16):
         listall.append((i, j))
 
-def ai(listai, listhum,listall):
+def ai(listai, listhum, listall):
     n = len(listai) + len(listhum)
     if n == 0:
         return (7, 7)
@@ -459,7 +459,6 @@ def ai(listai, listhum,listall):
         board = def_bord(listai, listhum)
         turn = def_turn(listai, listhum)
         x, y = AI.findBestChess(board, turn)
-        #print(x, y)
         return (y, x)
 
 

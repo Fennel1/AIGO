@@ -51,7 +51,7 @@ def ai(listai, listhum, listall):
     negamax(True, DEPTH, -99999999, 99999999, listai, listhum, list_now)
     # print("本次共剪枝次数：" + str(cut_count))
     # print("本次共搜索次数：" + str(search_count))
-    print("AI下一步最应该下的位置：" + str(next_point))
+    print("AI下的位置：" + str(next_point) + "\t剪枝次数：" + str(cut_count) + "\t搜索次数：" + str(search_count))
     return (next_point[0], next_point[1])
 
 
