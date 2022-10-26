@@ -41,6 +41,11 @@ shape_score = [(50, (0, 1, 1, 0, 0)),
 def ai(listai, listhum, listall):
     if len(listai)+len(listhum) == 0:
         return (7, 7)
+    if (len(listhum)) >= 4:
+        pos = check_enemy4(listai, listhum)
+        if pos != None:
+            print("AI下的位置：" + str(pos) + "\t剪枝次数：" + str(0) + "\t搜索次数：" + str(0))
+            return pos
     global list_all
     list_all = listall
     list_now = listai + listhum
@@ -137,7 +142,7 @@ def has_neightnor(pt, list3):
         for j in range(-1, 2):
             if i == 0 and j == 0:
                 continue
-            if (pt[0] + i, pt[1]+j) in list3:
+            if (pt[0] + i, pt[1] + j) in list3:
                 return True
     return False
 
@@ -203,8 +208,10 @@ def cal_score(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr):
                 pos.append(2)
             elif (m + (i + offset) * x_decrict, n + (i + offset) * y_derice) in my_list:
                 pos.append(1)
-            else:
+            elif 0 <= m + (i + offset) * x_decrict < ROW and 0<= n + (i + offset) * y_derice < COLUMN:
                 pos.append(0)
+            else:
+                pos.append(-1)
         tmp_shap5 = (pos[0], pos[1], pos[2], pos[3], pos[4])
         tmp_shap6 = (pos[0], pos[1], pos[2], pos[3], pos[4], pos[5])
 
@@ -251,88 +258,31 @@ def game_win(list):
                 return True
     return False
 
-# 定义五子棋窗口
-# def gobangwin():
-#     win = GraphWin("this is a gobang game", GRID_WIDTH * COLUMN, GRID_WIDTH * ROW)
-#     win.setBackground("yellow")
-    
-#     # i1 i2 分别绘制棋盘纵横线
-#     i1 = 0
-#     while i1 <= GRID_WIDTH * COLUMN:
-#         l = Line(Point(i1, 0), Point(i1, GRID_WIDTH * COLUMN))
-#         l.draw(win)
-#         i1 = i1 + GRID_WIDTH
-#     i2 = 0
-#     while i2 <= GRID_WIDTH * ROW:
-#         l = Line(Point(0, i2), Point(GRID_WIDTH * ROW, i2))
-#         l.draw(win)
-#         i2 = i2 + GRID_WIDTH
-#     return win
+
+go_x = [0,1,1,-1]
+go_y = [1,0,1,1]
+
+def check_enemy4(list1, list2):
+    for i in range(ROW):
+        for j in range(COLUMN):
+            if (i, j) not in list2:
+                continue
+            for k in range(4):
+                for offset in range(-5, 1):
+                    # offset = -2
+                    pos = []
+                    for p in range(0, 6):
+                        if (i + (p + offset) * go_x[k], j + (p + offset) * go_y[k]) in list2:
+                            pos.append(2)
+                        elif (i + (p + offset) * go_x[k], j + (p + offset) * go_y[k]) in list1:
+                            pos.append(1)
+                        else:
+                            pos.append(0)
+                    tmp_shap6 = (pos[0], pos[1], pos[2], pos[3], pos[4], pos[5])
+                    if tmp_shap6 == (0,2,2,2,2,1):
+                        return (i + (0+offset) * go_x[k], j + (0+offset) * go_y[k])
+                    elif tmp_shap6 == (1,2,2,2,2,0):
+                        return (i + (5+offset) * go_x[k], j + (5+offset) * go_y[k])
+    return None
 
 
-# def main():
-#     win = gobangwin()
-
-#     for i in range(COLUMN+1):
-#         for j in range(ROW+1):
-#             list_all.append((i, j))
-
-#     change = 0
-#     g = 0
-#     m = 0
-#     n = 0
-
-#     # g == 1 表示 game over
-#     while g == 0:
-        
-#         # 交替执子
-#         if change % 2 == 1:
-#             # ai 执子
-#             pos = ai()
-            
-#             # 表示落子重复
-#             if pos in list3:
-#                 message = Text(Point(200, 200), "不可用的位置" + str(pos[0]) + "," + str(pos[1]))
-#                 message.draw(win)
-#                 g = 1
-
-#             list1.append(pos)
-#             list3.append(pos)
-
-#             piece = Circle(Point(GRID_WIDTH * pos[0], GRID_WIDTH * pos[1]), 16)
-#             piece.setFill('white')
-#             piece.draw(win)
-
-#             if game_win(list1):
-#                 message = Text(Point(100, 100), "white win.")
-#                 message.draw(win)
-#                 g = 1
-#             change = change + 1
-
-#         else:
-#             # 获取用户指针像素级别坐标
-#             p2 = win.getMouse()
-#             if not ((round((p2.getX()) / GRID_WIDTH), round((p2.getY()) / GRID_WIDTH)) in list3):
-#                 # 获取用户落子棋盘坐标
-#                 a2 = round((p2.getX()) / GRID_WIDTH)
-#                 b2 = round((p2.getY()) / GRID_WIDTH)
-#                 list2.append((a2, b2))
-#                 list3.append((a2, b2))
-
-#                 piece = Circle(Point(GRID_WIDTH * a2, GRID_WIDTH * b2), 16)
-#                 piece.setFill('black')
-#                 piece.draw(win)
-#                 if game_win(list2):
-#                     message = Text(Point(100, 100), "black win.")
-#                     message.draw(win)
-#                     g = 1
-
-#                 change = change + 1
-
-#     message = Text(Point(100, 120), "Click anywhere to quit.")
-#     message.draw(win)
-#     win.getMouse()
-#     win.close()
-
-
-# main()
