@@ -1,5 +1,4 @@
 from math import *
-import numpy as np
 from graphics import *
 
 GRID_WIDTH = 40
@@ -16,7 +15,7 @@ list_all = []  # 整个棋盘的点
 next_point = [0, 0]  # AI下一步最应该下的位置
 
 
-ratio = 1  # 进攻的系数   大于1 进攻型，  小于1 防守型
+ratio = 1.2  # 进攻的系数   大于1 进攻型，  小于1 防守型
 DEPTH = 1  # 搜索深度   只能是单数。  如果是负数， 评估函数评估的的是自己多少步之后的自己得分的最大值，并不意味着是最好的棋， 评估函数的问题
 
 
@@ -41,6 +40,11 @@ shape_score = [(50, (0, 1, 1, 0, 0)),
 def ai(listai, listhum, listall):
     if len(listai)+len(listhum) == 0:
         return (7, 7)
+    if len(listai) >= 4:
+        pos = check_win(listai, listhum)
+        if pos != None:
+            print("AI下的位置：" + str(pos) + "\t剪枝次数：" + str(0) + "\t搜索次数：" + str(0))
+            return pos
     if (len(listhum)) >= 4:
         pos = check_enemy4(listai, listhum)
         if pos != None:
@@ -208,7 +212,7 @@ def cal_score(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr):
                 pos.append(2)
             elif (m + (i + offset) * x_decrict, n + (i + offset) * y_derice) in my_list:
                 pos.append(1)
-            elif 0 <= m + (i + offset) * x_decrict < ROW and 0<= n + (i + offset) * y_derice < COLUMN:
+            elif 0 <= m + (i + offset) * x_decrict <= ROW and 0 <= n + (i + offset) * y_derice <= COLUMN:
                 pos.append(0)
             else:
                 pos.append(-1)
@@ -262,14 +266,13 @@ def game_win(list):
 go_x = [0,1,1,-1]
 go_y = [1,0,1,1]
 
-def check_enemy4(list1, list2):
+def check_win(list1, list2):
     for i in range(ROW):
         for j in range(COLUMN):
-            if (i, j) not in list2:
+            if (i, j) not in list1:
                 continue
             for k in range(4):
                 for offset in range(-5, 1):
-                    # offset = -2
                     pos = []
                     for p in range(0, 6):
                         if (i + (p + offset) * go_x[k], j + (p + offset) * go_y[k]) in list2:
@@ -278,11 +281,46 @@ def check_enemy4(list1, list2):
                             pos.append(1)
                         else:
                             pos.append(0)
-                    tmp_shap6 = (pos[0], pos[1], pos[2], pos[3], pos[4], pos[5])
-                    if tmp_shap6 == (0,2,2,2,2,1):
+                    tmp_shape5 = (pos[0], pos[1], pos[2], pos[3], pos[4])
+                    if tmp_shape5 == (1,1,1,1,0):
+                        return (i + (4 + offset) * go_x[k], j + (4 + offset) * go_y[k])
+                    elif tmp_shape5 == (1,1,1,0,1):
+                        return (i + (3 + offset) * go_x[k], j + (3 + offset) * go_y[k])
+                    elif tmp_shape5 == (1,1,0,1,1):
+                        return (i + (2 + offset) * go_x[k], j + (2 + offset) * go_y[k])
+                    elif tmp_shape5 == (1,0,1,1,1):
+                        return (i + (1 + offset) * go_x[k], j + (1 + offset) * go_y[k])
+                    elif tmp_shape5 == (0,1,1,1,1):
+                        return (i + (0 + offset) * go_x[k], j + (0 + offset) * go_y[k])       
+    return None
+
+def check_enemy4(list1, list2):
+    for i in range(ROW):
+        for j in range(COLUMN):
+            if (i, j) not in list2:
+                continue
+            for k in range(4):
+                for offset in range(-5, 1):
+                    pos = []
+                    for p in range(0, 6):
+                        if (i + (p + offset) * go_x[k], j + (p + offset) * go_y[k]) in list2:
+                            pos.append(2)
+                        elif (i + (p + offset) * go_x[k], j + (p + offset) * go_y[k]) in list1:
+                            pos.append(1)
+                        else:
+                            pos.append(0)
+                    tmp_shape5 = (pos[0], pos[1], pos[2], pos[3], pos[4])
+                    tmp_shape6 = (pos[0], pos[1], pos[2], pos[3], pos[4], pos[5])
+                    if tmp_shape6 == (0,2,2,2,2,1):
                         return (i + (0+offset) * go_x[k], j + (0+offset) * go_y[k])
-                    elif tmp_shap6 == (1,2,2,2,2,0):
+                    elif tmp_shape6 == (1,2,2,2,2,0):
                         return (i + (5+offset) * go_x[k], j + (5+offset) * go_y[k])
+                    elif tmp_shape5 == (2,0,2,2,2):
+                        return (i + (1+offset) * go_x[k], j + (1+offset) * go_y[k])
+                    elif tmp_shape5 == (2,2,0,2,2):
+                        return (i + (2+offset) * go_x[k], j + (2+offset) * go_y[k])
+                    elif tmp_shape5 == (2,2,2,0,2):
+                        return (i + (3+offset) * go_x[k], j + (3+offset) * go_y[k])
     return None
 
 
