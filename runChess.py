@@ -64,7 +64,7 @@ def runChess(game_nos,time_limits,MAX_TIME=360):
             for j in range(ROW+1):
                 list_all.append((i, j))
                 
-        change = 0
+        change = 1
         g = 0
         m = 0
         n = 0
@@ -90,7 +90,7 @@ def runChess(game_nos,time_limits,MAX_TIME=360):
                                     piece = Circle(Point(GRID_WIDTH * pos[0], GRID_WIDTH * pos[1]), 16)
                                     piece.setFill('white')
                                     piece.draw(win)
-                                    message = Text(Point(GRID_WIDTH * pos[0], GRID_WIDTH * pos[1]), change+1)
+                                    message = Text(Point(GRID_WIDTH * pos[0], GRID_WIDTH * pos[1]), change)
                                     message.setTextColor('black')
                                     message.draw(win)
                         else:
@@ -101,7 +101,7 @@ def runChess(game_nos,time_limits,MAX_TIME=360):
                                     piece = Circle(Point(GRID_WIDTH * pos[0], GRID_WIDTH * pos[1]), 16)
                                     piece.setFill('black')
                                     piece.draw(win)
-                                    message = Text(Point(GRID_WIDTH * pos[0], GRID_WIDTH * pos[1]), change+1)
+                                    message = Text(Point(GRID_WIDTH * pos[0], GRID_WIDTH * pos[1]), change)
                                     message.setTextColor('white')
                                     message.draw(win)
                         if pos not in blank_list:

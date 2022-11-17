@@ -14,95 +14,43 @@ list_all = []  # 整个棋盘的点
 
 next_point = [0, 0]  # AI下一步最应该下的位置
 
-num_ai = 0
-# shape_score = []
 
 ratio = 1  # 进攻的系数   大于1 进攻型，  小于1 防守型
 DEPTH = 1  # 搜索深度   只能是单数。  如果是负数， 评估函数评估的的是自己多少步之后的自己得分的最大值，并不意味着是最好的棋， 评估函数的问题
 
 
 # 棋型的评估分数,表示当棋局为不同形状时的得分
-shape_score = [
-            #    (20, (0, 1, 0, 1, 0)),
-               (50, (0, 1, 1, 0, 0)),
+shape_score = [(50, (0, 1, 1, 0, 0)),
                (50, (0, 0, 1, 1, 0)),
                (200, (1, 1, 0, 1, 0)),
                (500, (0, 0, 1, 1, 1)),
                (500, (1, 1, 1, 0, 0)),
                (50000, (0, 1, 1, 1, 0)),
-               (10000, (0, 1, 0, 1, 1, 0)),
-               (10000, (0, 1, 1, 0, 1, 0)),
-               (50000, (1, 1, 1, 0, 1)),
-               (10000, (1, 1, 0, 1, 1)),
-               (50000, (1, 0, 1, 1, 1)),
-               (90000, (1, 1, 1, 1, 0)),
-               (90000, (0, 1, 1, 1, 1)),
+               (40000, (0, 1, 0, 1, 1, 0)),
+               (40000, (0, 1, 1, 0, 1, 0)),
+               (60000, (1, 1, 1, 0, 1)),
+               (60000, (1, 1, 0, 1, 1)),
+               (60000, (1, 0, 1, 1, 1)),
+               (50000, (1, 1, 1, 1, 0)),
+               (50000, (0, 1, 1, 1, 1)),
                (5000000, (0, 1, 1, 1, 1, 0)),
             #    (99999999, (1, 1, 1, 1, 1))
                ]
 
-shape_score2 = [
-#眠二
-               (100, (1, 1, 0, 0, 0)),
-               (100, (0, 0, 0, 1, 1)),
-               (100, (1, 0, 1, 0, 0)),
-               (100, (0, 0, 1, 0, 1)),
-               (100, (1, 0, 0, 1, 0)),
-               (100, (0, 1, 0, 0, 1)),
-               (100, (1, 0, 0, 0, 1)),
-#活二
-               (700, (0, 0, 1, 1, 0, 0)),
-               (700, (0, 1, 0, 1, 0)),
-               (700, (0, 1, 0, 0, 1, 0)),
-#眠三
-               (2000, (1, 1, 1, 0, 0)),
-               (2000, (0, 0, 1, 1, 1)),
-               (2000, (1, 1, 0, 1, 0)),
-               (2000, (0, 1, 0, 1, 1)),
-               (2000, (1, 0, 1, 1, 0)),
-               (2000, (0, 1, 1, 0, 1)),
-               (2000, (1, 1, 0, 0, 1)),
-               (2000, (1, 0, 0, 1, 1)),
-               (2000, (1, 0, 1, 0, 1)),
-               (2000, (0, 1, 1, 1, 0)),
-#活三
-               (30000, (0, 1, 1, 1, 0, 0)),
-               (30000, (0, 0, 1, 1, 1, 0)),
-               (30000, (0, 1, 1, 0, 1, 0)),
-               (30000, (0, 1, 0, 1, 1, 0)),
-#冲四
-               (50000, (1, 1, 1, 1, 0)),
-               (50000, (0, 1, 1, 1, 1)),
-               (50000, (1, 1, 1, 0, 1)),
-               (50000, (1, 0, 1, 1, 1)),
-               (50000, (1, 1, 0, 1, 1)),
-#活四
-               (100000, (0, 1, 1, 1, 1, 0))]
 
 def ai(listai, listhum, listall):
     if len(listai)+len(listhum) == 0:
         return (7, 7)
-    global num_ai
-    global shape_score
-    if len(listai)+len(listhum) == 1:
-        # num_ai += 1
-        # if num_ai == 2:
-        #     shape_score = shape_score2
-        # else:
-        #     shape_score = shape_score1
-        return (8, 7)
-
     if len(listai) >= 4:
         pos = check_win(listai, listhum)
-        if pos != None and pos not in listai:
+        if pos != None:
             print("AI下的位置：" + str(pos) + "\t剪枝次数：" + str(0) + "\t搜索次数：" + str(0))
             return pos
     if (len(listhum)) >= 4:
         pos = check_enemy4(listai, listhum)
-        if pos != None and pos not in listai:
+        if pos != None:
             print("AI下的位置：" + str(pos) + "\t剪枝次数：" + str(0) + "\t搜索次数：" + str(0))
             return pos
-
     global list_all
     list_all = listall
     list_now = listai + listhum
@@ -110,23 +58,20 @@ def ai(listai, listhum, listall):
     cut_count = 0
     global search_count   # 统计搜索次数
     search_count = 0
-
     # 初始化 负值极大算法
     negamax(True, DEPTH, -99999999, 99999999, listai, listhum, list_now)
+    # print("本次共剪枝次数：" + str(cut_count))
+    # print("本次共搜索次数：" + str(search_count))
     print("AI下的位置：" + str(next_point) + "\t剪枝次数：" + str(cut_count) + "\t搜索次数：" + str(search_count))
-
     return (next_point[0], next_point[1])
 
 
 # 负值极大算法搜索 alpha + beta剪枝,合并极大节点和极小节点两种情况,减少代码量
-# 在一盘棋局中,若到棋手A走棋,alpha相当于棋手A得到的最好的值,对于棋手A的值,从对手的角度看就要取负值.
+# 在一盘棋局中,若到棋手A走棋,alpha 相当于棋手A得到的最好的值,对于棋手A的值,从对手的角度看就要取负值.
 def negamax(is_ai, depth, alpha, beta, list1, list2, list3):
     
     # 游戏是否结束 | | 探索的递归深度是否到边界
-    # if game_win(list1) or game_win(list2) or depth == 0:
-    #     return evaluation(is_ai, list1, list2)
-
-    if depth == 0:
+    if game_win(list1) or game_win(list2) or depth == 0:
         return evaluation(is_ai, list1, list2)
 
     # list_all - list3 = {可落子的点集}
@@ -135,13 +80,13 @@ def negamax(is_ai, depth, alpha, beta, list1, list2, list3):
     
     # 遍历每一个候选步
     for next_step in blank_list:
-        # 如果要评估的位置没有相邻的子， 则不去评估  减少计算
-        if not has_neightnor(next_step, list3):
-            continue
 
         global search_count
         search_count += 1
 
+        # 如果要评估的位置没有相邻的子， 则不去评估  减少计算
+        if not has_neightnor(next_step, list3):
+            continue
         # 判断是否为ai走棋
         if is_ai:
             list1.append(next_step)
@@ -226,10 +171,10 @@ def evaluation(is_ai, list1, list2):
     for pt in my_list:
         m = pt[0]
         n = pt[1]
-        my_score += cal_score_my(m, n, 0, 1, enemy_list, my_list, score_all_arr, 0)
-        my_score += cal_score_my(m, n, 1, 0, enemy_list, my_list, score_all_arr, 0)
-        my_score += cal_score_my(m, n, 1, 1, enemy_list, my_list, score_all_arr, 0)
-        my_score += cal_score_my(m, n, -1, 1, enemy_list, my_list, score_all_arr, 0)
+        my_score += cal_score(m, n, 0, 1, enemy_list, my_list, score_all_arr, 0)
+        my_score += cal_score(m, n, 1, 0, enemy_list, my_list, score_all_arr, 0)
+        my_score += cal_score(m, n, 1, 1, enemy_list, my_list, score_all_arr, 0)
+        my_score += cal_score(m, n, -1, 1, enemy_list, my_list, score_all_arr, 0)
 
     #  算敌人的得分， 并减去
     score_all_arr_enemy = []
@@ -237,10 +182,10 @@ def evaluation(is_ai, list1, list2):
     for pt in enemy_list:
         m = pt[0]
         n = pt[1]
-        enemy_score += cal_score_enemy(m, n, 0, 1, my_list, enemy_list, score_all_arr_enemy, 50)
-        enemy_score += cal_score_enemy(m, n, 1, 0, my_list, enemy_list, score_all_arr_enemy, 50)
-        enemy_score += cal_score_enemy(m, n, 1, 1, my_list, enemy_list, score_all_arr_enemy, 50)
-        enemy_score += cal_score_enemy(m, n, -1, 1, my_list, enemy_list, score_all_arr_enemy, 50)
+        enemy_score += cal_score(m, n, 0, 1, my_list, enemy_list, score_all_arr_enemy, 50)
+        enemy_score += cal_score(m, n, 1, 0, my_list, enemy_list, score_all_arr_enemy, 50)
+        enemy_score += cal_score(m, n, 1, 1, my_list, enemy_list, score_all_arr_enemy, 50)
+        enemy_score += cal_score(m, n, -1, 1, my_list, enemy_list, score_all_arr_enemy, 50)
 
     # 本方分数 减去 敌方分数
     total_score = my_score - enemy_score*ratio*0.1
@@ -249,7 +194,7 @@ def evaluation(is_ai, list1, list2):
 
 
 # 每个方向上的分值计算
-def cal_score_my(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr, b):
+def cal_score(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr, b):
     add_score = 0  # 加分项
     # 在一个方向上， 只取最大的得分项
     max_score_shape = (0, None)
@@ -292,60 +237,32 @@ def cal_score_my(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr, 
             for pt1 in item[1]:
                 for pt2 in max_score_shape[1]:
                     if pt1 == pt2 and max_score_shape[0] > 10 and item[0] > 10:
-                        add_score += item[0] + max_score_shape[0]
+                        add_score += item[0] + max_score_shape[0]*0.3
 
         score_all_arr.append(max_score_shape)
 
     return add_score + max_score_shape[0] + b
 
-def cal_score_enemy(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr, b):
-    add_score = 0  # 加分项
-    # 在一个方向上， 只取最大的得分项
-    max_score_shape = (0, None)
-    # 如果此方向上，该点已经有得分形状，不重复计算
-    for item in score_all_arr:
-        for pt in item[1]:
-            if m == pt[0] and n == pt[1] and x_decrict == item[2][0] and y_derice == item[2][1]:
-                return 0
 
-    # 在落子点 左右方向上循环查找得分形状
-    for offset in range(-5, 1):
-        # offset = -2
-        pos = []
-        for i in range(0, 6):
-            if (m + (i + offset) * x_decrict, n + (i + offset) * y_derice) in enemy_list:
-                pos.append(2)
-            elif (m + (i + offset) * x_decrict, n + (i + offset) * y_derice) in my_list:
-                pos.append(1)
-            elif 0 <= m + (i + offset) * x_decrict <= ROW and 0 <= n + (i + offset) * y_derice <= COLUMN:
-                pos.append(0)
-            else:
-                pos.append(-1)
-        tmp_shap5 = (pos[0], pos[1], pos[2], pos[3], pos[4])
-        tmp_shap6 = (pos[0], pos[1], pos[2], pos[3], pos[4], pos[5])
+def game_win(list):
+    for m in range(COLUMN):
+        for n in range(ROW):
+            
+            # 判赢条件 ：横,竖,左斜,右斜 共四个方向，若连子为5则判赢；
+            if n < ROW - 4 and (m, n) in list and (m, n + 1) in list and (m, n + 2) in list and (
+                    m, n + 3) in list and (m, n + 4) in list:
+                return True
+            elif m < ROW - 4 and (m, n) in list and (m + 1, n) in list and (m + 2, n) in list and (
+                        m + 3, n) in list and (m + 4, n) in list:
+                return True
+            elif m < ROW - 4 and n < ROW - 4 and (m, n) in list and (m + 1, n + 1) in list and (
+                        m + 2, n + 2) in list and (m + 3, n + 3) in list and (m + 4, n + 4) in list:
+                return True
+            elif m < ROW - 4 and n > 3 and (m, n) in list and (m + 1, n - 1) in list and (
+                        m + 2, n - 2) in list and (m + 3, n - 3) in list and (m + 4, n - 4) in list:
+                return True
+    return False
 
-        for (score, shape) in shape_score:
-            if tmp_shap5 == shape or tmp_shap6 == shape:
-                # if tmp_shap5 == (1,1,1,1,1):
-                    # print('win')
-                if score > max_score_shape[0]:
-                    max_score_shape = (score, ((m + (0+offset) * x_decrict, n + (0+offset) * y_derice),
-                                               (m + (1+offset) * x_decrict, n + (1+offset) * y_derice),
-                                               (m + (2+offset) * x_decrict, n + (2+offset) * y_derice),
-                                               (m + (3+offset) * x_decrict, n + (3+offset) * y_derice),
-                                               (m + (4+offset) * x_decrict, n + (4+offset) * y_derice)), (x_decrict, y_derice))
-
-    # 计算两个形状相交， 如两个3活 相交， 得分增加 一个子的除外
-    if max_score_shape[1] is not None:
-        for item in score_all_arr:
-            for pt1 in item[1]:
-                for pt2 in max_score_shape[1]:
-                    if pt1 == pt2 and max_score_shape[0] > 10 and item[0] > 10:
-                        add_score += item[0] + max_score_shape[0]
-
-        score_all_arr.append(max_score_shape)
-
-    return add_score + max_score_shape[0] + b
 
 go_x = [0,1,1,-1]
 go_y = [1,0,1,1]
@@ -363,10 +280,8 @@ def check_win(list1, list2):
                             pos.append(2)
                         elif (i + (p + offset) * go_x[k], j + (p + offset) * go_y[k]) in list1:
                             pos.append(1)
-                        elif 0 <= i + (p + offset) * go_x[k] <= ROW and 0 <= j + (p + offset) * go_y[k] <= COLUMN:
-                            pos.append(0)
                         else:
-                            pos.append(-1)
+                            pos.append(0)
                     tmp_shape5 = (pos[0], pos[1], pos[2], pos[3], pos[4])
                     if tmp_shape5 == (1,1,1,1,0):
                         return (i + (4 + offset) * go_x[k], j + (4 + offset) * go_y[k])
@@ -377,7 +292,7 @@ def check_win(list1, list2):
                     elif tmp_shape5 == (1,0,1,1,1):
                         return (i + (1 + offset) * go_x[k], j + (1 + offset) * go_y[k])
                     elif tmp_shape5 == (0,1,1,1,1):
-                        return (i + (0 + offset) * go_x[k], j + (0 + offset) * go_y[k])
+                        return (i + (0 + offset) * go_x[k], j + (0 + offset) * go_y[k])       
     return None
 
 def check_enemy4(list1, list2):
@@ -393,10 +308,8 @@ def check_enemy4(list1, list2):
                             pos.append(2)
                         elif (i + (p + offset) * go_x[k], j + (p + offset) * go_y[k]) in list1:
                             pos.append(1)
-                        elif 0 <= i + (p + offset) * go_x[k] <= ROW and 0 <= j + (p + offset) * go_y[k] <= COLUMN:
-                            pos.append(0)
                         else:
-                            pos.append(-1)
+                            pos.append(0)
                     tmp_shape5 = (pos[0], pos[1], pos[2], pos[3], pos[4])
                     tmp_shape6 = (pos[0], pos[1], pos[2], pos[3], pos[4], pos[5])
                     if tmp_shape6 == (0,2,2,2,2,1):
