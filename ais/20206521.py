@@ -85,12 +85,11 @@ def ai(listai, listhum, listall):
     global num_ai
     global shape_score
     if len(listai)+len(listhum) == 1:
-        # num_ai += 1
-        # if num_ai == 2:
-        #     shape_score = shape_score2
-        # else:
-        #     shape_score = shape_score1
+        num_ai += 1
         return (8, 7)
+    
+    if len(listai)+len(listhum) == 7 and check_staus(listai, listhum):
+        return (7, 6)
 
     if len(listai) >= 4:
         pos = check_win(listai, listhum)
@@ -292,7 +291,7 @@ def cal_score_my(m, n, x_decrict, y_derice, enemy_list, my_list, score_all_arr, 
             for pt1 in item[1]:
                 for pt2 in max_score_shape[1]:
                     if pt1 == pt2 and max_score_shape[0] > 10 and item[0] > 10:
-                        add_score += item[0] + max_score_shape[0]
+                        add_score += item[0]*0.5 + max_score_shape[0]
 
         score_all_arr.append(max_score_shape)
 
@@ -412,3 +411,15 @@ def check_enemy4(list1, list2):
     return None
 
 
+def check_staus(listai, listhum):
+    """
+    o
+     x
+      ×o
+      ××
+        o
+    """
+    if (6, 6) in listhum and (7, 7) in listhum and (8, 8) in listhum and (7, 8) in listhum \
+        and (5, 5) in listai and (9, 9) in listai and (8, 7) in listai:
+        return True
+    return False
