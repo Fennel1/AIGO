@@ -58,6 +58,7 @@ def get_pos(IsAI, deepth ,listAI, listHuman, listAll):
         listAI_copy = listAI.copy()
         listHuman_copy = listHuman.copy()
         list_four,ok = check_four(listHuman_copy, listAI_copy) 
+
         listAI_copy.clear()
         listHuman_copy.clear()
         listAI_copy = listAI.copy()
@@ -237,7 +238,7 @@ def get_score(check_list,other_list,listAll):
         score += get_pos_score(-1, -1, pos, check_list, other_list, listAll);
     return score
 
-def get_pos_score(left, right,pos, check_list, other_list, listAll):
+def get_pos_score(left, right, pos, check_list, other_list, listAll):
     score = 0
     score_pos_tem = []
     for i in range(-1, 5): #这里还没有检查越界情况
@@ -311,6 +312,7 @@ def find_posible(list_human,list_AI, more = 2):
                 pos1 = pos[1] + num2
                 if pos0 < COLUMN and pos1 <ROW and pos0>0 and pos1>0:
                     posi_list.append((pos0,pos1))
+
     for pos in list_human:
         for num1 in range (0, more):
             for num2 in range(0,more):
