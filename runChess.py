@@ -174,49 +174,49 @@ def gobangwin():
 
 if __name__ == "__main__":
         time_white_total = 0
-        result, time_white = runChess(('20206521','ai_1'),1000)
+        result, time_white = runChess(('test2','ai_1'),1000)
         time_white_total += time_white
         print(time_white_total)
         result["step_total_white"] = time_white_total
         print(result)
 
         time_white_total = 0
-        result, time_white = runChess(('20206521','ai_2'),1000)
+        result, time_white = runChess(('test2','ai_2'),1000)
         time_white_total += time_white
         print(time_white_total)
         result["step_total_white"] = time_white_total
         print(result)
 
         time_white_total = 0
-        result, time_white = runChess(('20206521','ai_3'),1000)
+        result, time_white = runChess(('test2','ai_3'),1000)
         time_white_total += time_white
         print(time_white_total)
         result["step_total_white"] = time_white_total
         print(result)
 
         time_white_total = 0
-        result, time_white = runChess(('20206521','ai_4'),1000)
+        result, time_white = runChess(('test2','ai_4'),1000)
         time_white_total += time_white
         print(time_white_total)
         result["step_total_white"] = time_white_total
         print(result)
 
         time_white_total = 0
-        result, time_white = runChess(('20206521','ai_5'),1000)
+        result, time_white = runChess(('test2','ai_5'),1000)
         time_white_total += time_white
         print(time_white_total)
         result["step_total_white"] = time_white_total
         print(result)
 
         time_white_total = 0
-        result, time_white = runChess(('20206521','ai_6'),1000)
+        result, time_white = runChess(('test2','ai_6'),1000)
         time_white_total += time_white
         print(time_white_total)
         result["step_total_white"] = time_white_total
         print(result)
 
         time_white_total = 0
-        result, time_white = runChess(('20206521','ai_7'),1000)
+        result, time_white = runChess(('test2','ai_7'),1000)
         time_white_total += time_white
         print(time_white_total)
         result["step_total_white"] = time_white_total
